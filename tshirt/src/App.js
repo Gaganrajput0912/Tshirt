@@ -7,18 +7,33 @@ function App() {
   const [totalPrice, setTotalPrice] = useState(0);
 
   // Function to add a product
-  const handleAddProduct = () => {
-    const updatedProducts = [...products];
-    const productIndex = updatedProducts.findIndex(
-      (p) => p.name === newProduct.name && p.size === newProduct.size
-    );
-    if (productIndex !== -1) {
-      updatedProducts[productIndex].quantity += 1;
-    } else {
-      updatedProducts.push({ ...newProduct, quantity: 1 });
+  const handleAddProduct = async () => {
+    try {
+      const updatedProducts = [...products];
+      const productIndex = updatedProducts.findIndex(
+        (p) => p.name === newProduct.name && p.size === newProduct.size
+      );
+      if (productIndex !== -1) {
+        updatedProducts[productIndex].quantity += 1;
+      } else {
+        updatedProducts.push({ ...newProduct, quantity: 1 });
+      }
+      const response = await fetch(
+        "https://crudcrud.com/api/100ab9bbd9d0408294d88ebdf4773da1/products",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newProduct),
+        }
+      );
+      const data = await response.json();
+      setProducts([...products, data]);
+      setNewProduct({});
+    } catch (error) {
+      console.error(error);
     }
-    setProducts(updatedProducts);
-    setNewProduct({});
   };
 
   // Function to add product to cart
